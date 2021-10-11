@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+	<div class="navbar-brand">
+		<img src="img/logo.png" alt='{{template "site_name"}} Logo' loading="lazy" width=30 height=30>
+		{{template "site_name"}}
+	</div>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item" id="navbar_contacts">
+				<a class="nav-link" href="/contacts.html">Contacts</a>
+			</li>
+		</ul>
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item hidden" id="navbar_profile">
+				<a href="/profile.html" class="btn btn-sm btn-outline-secondary ml-sm-2 mt-2 mt-sm-0">My Profile</a>
+			</li>
+			<li class="nav-item hidden" id="navbar_logout">
+				<a href="javascript:;" class="btn btn-sm btn-outline-secondary ml-sm-2 mt-2 mt-sm-0" id="navbar_logout">Logout</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+<script type="module">
+	$("#navbar_logout").click(function() { 
+		$.get('/user/logout')
+		.done(function() {
+			// Redirect to log in page
+			window.location.href = '/login.html'; 
+		});
+	});
+</script>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	{{template "header"}}
+
+	<title>Request to Join - {{template "site_name"}}</title>
+
+	<!-- Custom styles for this template -->
+	<link href="css/login.css" rel="stylesheet">
+	</head>
+
+  <body class="text-center">
+		{{template "navbar"}}
+		
+		<div id="alerts"></div>
+
+		<!-- Form -->
+		<form class="form-signin">
+			<h1 class="h3 mb-3 font-weight-normal">Request to join {{template "site_name"}}</h1>
+			<input type="email" id="email" class="form-control" placeholder="Email address" required title="This email address is only used for account administration, and will not be shared without your permission">
+			<input type="password" id="password" class="form-control" placeholder="Password" required>
+			<input type="password" id="confirm" class="form-control" placeholder="Re-enter password" required>
+			<button class="btn btn-lg btn-primary btn-block" type="button" id="register">Request to Join</button>
+			<small><img src="img/alert-circle.svg" alt="Don't forget!" width="16px">&nbsp;Don't forget to use a unique password for every website!</small>
+			<p class="mt-5 mb-3 text-muted">&copy; 2021 Michael Humphrey<br>All Rights Reserved</p>
+		</form>
+		
+		{{template "footer"}}
+
+		<!-- Modal -->
+		<div class="modal fade in" tabindex="-1" role="dialog" id="wait">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Requesting to join...</h5>
+				</div>
+				<div class="modal-body">
+					<p>Please wait while we process your request...</p>
+				</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Script -->
+		<script src="js/register.js" type="module"></script>
+  </body>
+</html>
