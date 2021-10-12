@@ -24,15 +24,7 @@ $('#wait').on('shown.bs.modal', function (e) {
 	console.log("Payload:");
 	console.log(payload);
 	$.post("/user/login", JSON.stringify(payload))
-		.done(function( data ) {
-			// Set the user to be logged in
-			try {
-				window.localStorage.setItem("logged_in", true);
-			} catch (err) {
-				console.log("Unable to set localStorage variable 'logged_in' to true.");
-				console.log(err);
-			}
-			
+		.done(function( data ) {			
 			// Save the user_id
 			try {
 				console.log("Login response data:");
@@ -43,12 +35,35 @@ $('#wait').on('shown.bs.modal', function (e) {
 				console.log(err);
 			}
 
-			// Redirect to next URL
-			let redirect = new URL(window.location.href).searchParams.get("redirect");
-			if (redirect === null) {
-				redirect = "/contacts.html";
+			// Save the email in session storage
+			try {
+				window.sessionStorage.setItem("email", payload.email);
+			} catch (err) {
+				console.log("Unable to set sessionStorage variable 'email'");
+				console.log(err);
 			}
-			redirect = decodeURIComponent(redirect);
+
+			console.log("Account status: " + data.status);
+			let redirect;
+			switch (data.status)
+			{
+				case 'VERIFY_EMAIL':
+					redirect = "/verify_email.html";
+					break;
+				case 'VERIFY_IDENTITY':
+					redirect = "/verify_identity.html";
+					break;
+				case 'PENDING_IDENTIFICATION':
+					redirect = "/profile.html";
+					break;
+				default:
+					redirect = decodeURIComponent(new URL(window.location.href).searchParams.get("redirect"));
+					if (redirect === null) {
+						redirect = "/contacts.html";
+					}
+					break;
+			}
+
 			console.log("Redirecting to: " + redirect);
 			window.location.href = redirect;
 		})
@@ -61,8 +76,7 @@ $('#wait').on('shown.bs.modal', function (e) {
 			console.log(data)
 		})
 		.always(function() {
-			console.log("Hiding modal...")
-			$("#wait").modal("hide")
+			$("#wait").modal("hide");
 		});
 });
 

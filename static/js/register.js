@@ -22,7 +22,8 @@ $("#register").click(function() {
 	}
 });
 $("#wait").on('shown.bs.modal', function (e) {
-	$.post("/user/register", JSON.stringify({ email: $("#email").val(), password: $("#password").val() }) )
+	let payload = { email: $("#email").val(), password: $("#password").val() };
+	$.post("/user/register", JSON.stringify(payload))
 		.done(function( data ) {
 			console.log("Register response data:");
 			console.log(data);
@@ -35,14 +36,16 @@ $("#wait").on('shown.bs.modal', function (e) {
 				console.log(err);
 			}
 
-			// Redirect to next URL
-			let redirect = new URL(window.location.href).searchParams.get("redirect");
-			if (redirect === null) {
-				redirect = "/contacts.html";
+			// Save the email in session storage
+			try {
+				window.sessionStorage.setItem("email", payload.email);
+			} catch (err) {
+				console.log("Unable to set sessionStorage variable 'email'");
+				console.log(err);
 			}
-			redirect = decodeURIComponent(redirect);
-			console.log("Redirecting to: " + redirect);
-			window.location.href = redirect;
+			
+			// Redirect to verify email page
+			window.location.href = "/verify_email.html";
 		})
 		.fail(function( data ) {
 			alert_ajax_failure("Registration failed.", data, true);

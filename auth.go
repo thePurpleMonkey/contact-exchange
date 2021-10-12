@@ -7,12 +7,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"text/template"
 	"time"
 
 	"github.com/dchest/uniuri"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -20,12 +18,12 @@ import (
 
 // User is a struct that models the structure of a user
 type User struct {
-	UserID        int64  `json:"user_id"`
-	Email         string `json:"email"`
-	Password      string `json:"password,omitempty"`
-	Verified      bool   `json:"verified"`
-	AccountStatus string `json:"account_status"`
-	RememberMe    bool   `json:"remember"`
+	UserID        int64      `json:"user_id"`
+	Email         string     `json:"email"`
+	Password      string     `json:"password,omitempty"`
+	Verified      *time.Time `json:"verified"`
+	AccountStatus string     `json:"account_status"`
+	RememberMe    bool       `json:"remember"`
 }
 
 // PasswordResetRequest is a data structure to model incoming parameters of a password reset POST request
@@ -376,120 +374,10 @@ func RequireAuthentication(f http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// VerifyCollectionID is a middleware that checks if the user is authorized
-// to access a collection, and returns a 403 Forbidden error if not.
-func VerifyCollectionID(f http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		session, err := getSession(r)
-		if err != nil {
-			log.Printf("Verify Collection ID - Unable to get session: %v\n", err)
-			SendError(w, SERVER_ERROR_MESSAGE, http.StatusInternalServerError)
-			return
-		}
-
-		// Get the collections this user is authorized to access
-		var userID = session.Values["user_id"].(int64)
-		acceptableIDs, err := getAuthorizedCollectionIDs(userID)
-		if err != nil {
-			SendError(w, DATABASE_ERROR_MESSAGE, http.StatusInternalServerError)
-			return
-		}
-
-		// Get URL parameter
-		collectionID, err := strconv.ParseInt(mux.Vars(r)["collection_id"], 10, 64)
-		if err != nil {
-			log.Printf("Collection ID middleware - Unable to get collection id: %v\n", err)
-			SendError(w, URL_ERROR_MESSAGE, http.StatusBadRequest)
-			return
-		}
-
-		for _, id := range acceptableIDs {
-			if collectionID == id {
-				f(w, r)
-				return
-			}
-		}
-
-		log.Printf("%v | %v not found in authorized collection IDs: %v", session.Values["email"], collectionID, acceptableIDs)
-		SendError(w, "Forbidden", http.StatusForbidden)
-	}
-}
-
-// VerifySetlistID is a middleware that checks if the user is authorized
-// to access a setlist, and returns a 403 Forbidden error if not.
-func VerifySetlistID(f http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		session, err := getSession(r)
-		if err != nil {
-			log.Printf("Verify Setlist ID - Unable to get session: %v\n", err)
-			SendError(w, SERVER_ERROR_MESSAGE, http.StatusInternalServerError)
-			return
-		}
-
-		// Get URL parameter
-		setlistID, err := strconv.ParseInt(mux.Vars(r)["setlist_id"], 10, 64)
-		if err != nil {
-			log.Printf("Setlist ID middleware - Unable to get setlist id: %v\n", err)
-			SendError(w, URL_ERROR_MESSAGE, http.StatusBadRequest)
-			return
-		}
-
-		var userID int64
-		var shared bool
-		if err = db.QueryRow("SELECT user_id, shared FROM setlists WHERE setlist_id = $1", setlistID).Scan(&userID, &shared); err != nil {
-			log.Printf("Setlist ID middleware - Unable to get retrieve setlist user_id: %v\n", err)
-			SendError(w, DATABASE_ERROR_MESSAGE, http.StatusInternalServerError)
-			return
-		}
-
-		// Don't check user_id if setlist is shared
-		if !shared && userID != session.Values["user_id"].(int64) {
-			log.Printf("Setlist ID middleware - User %d attempted to access setlist owned by user %d.", session.Values["user_id"], userID)
-			SendError(w, `{"error": "Setlist not found"}`, http.StatusNotFound)
-			return
-		}
-
-		f(w, r)
-	}
-}
-
-func getAuthorizedCollectionIDs(userID int64) ([]int64, error) {
-	// Get a list of all user's collections
-	rows, err := db.Query("SELECT collection_id FROM collection_members WHERE user_id = $1", userID)
-	if err != nil {
-		log.Printf("getAuthorizedCollectionIDs - Unable to retrieve collection ids from database: %v\n", err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	// Retrieve rows from database
-	IDs := make([]int64, 0)
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			log.Printf("getAuthorizedCollectionIDs - Error parsing collection IDs from database result: %v\n", err)
-			continue
-		}
-		IDs = append(IDs, id)
-	}
-
-	// Check for errors from iterating over rows.
-	if err := rows.Err(); err != nil {
-		log.Printf("getAuthorizedCollectionIDs - Unable to read collection IDs from database: %v\n", err)
-		return nil, err
-	}
-
-	return IDs, nil
-}
-
-func checkAdmin(userID, collectionID int64) (bool, error) {
+func checkAdmin(userID int64) (bool, error) {
 	var admin bool
-	if err := db.QueryRow("SELECT admin FROM collection_members WHERE user_id = $1 AND collection_id = $2", userID, collectionID).Scan(&admin); err != nil {
-		if err == sql.ErrNoRows {
-			log.Printf("checkAdmin - User %d not found in collection %d\n", userID, collectionID)
-		} else {
-			log.Printf("checkAdmin - Error accessing database: %v\n", err)
-		}
+	if err := db.QueryRow("SELECT admin FROM users WHERE user_id = $1", userID).Scan(&admin); err != nil {
+		log.Printf("checkAdmin - Error accessing database: %v\n", err)
 		return false, err
 	}
 

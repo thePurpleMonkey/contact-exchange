@@ -34,6 +34,7 @@ func makeRouter() *mux.Router {
 	r.HandleFunc("/user/register", register).Methods("POST")
 	r.HandleFunc("/user/password/forgot", requestPasswordResetEmail).Methods("POST")
 	r.HandleFunc("/user/password/reset", resetPassword)
+	r.HandleFunc("/user/verify", RequireAuthentication(VerifyHandler))
 
 	// Contact Us
 	// r.HandleFunc("/contact", ContactHandler).Methods("POST")

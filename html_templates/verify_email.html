@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{{template "header"}}
+		<title>Verify Email - Sheet Music Organizer</title>
+	</head>
+	<body>
+		{{template "navbar"}}
+		
+		<div class="container">
+			<h1>Verify Email</h1>
+			<hr>
+			<p>
+				In order to continue with your account registration, you must verify your email address first.
+				You will receive an email to the email address below with a link to verify your account.
+				Please click on the link in the email to proceed with your account registration.
+			</p>
+			<p>
+				Email address: <span id="email"></span>
+			</p>
+			<button type="button" class="btn btn-primary" id="verify_email_button">Send verification email</button>
+			{{template "footer"}}
+		</div>
+		
+		<!-- Script -->
+		<script src="/js/verify_email.js" type="module"></script>
+	</body>
+</html>
