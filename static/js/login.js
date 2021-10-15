@@ -53,7 +53,7 @@ $('#wait').on('shown.bs.modal', function (e) {
 				case 'VERIFY_IDENTITY':
 					redirect = "/verify_identity.html";
 					break;
-				case 'PENDING_IDENTIFICATION':
+				case 'PENDING_APPROVAL':
 					redirect = "/profile.html";
 					break;
 				default:

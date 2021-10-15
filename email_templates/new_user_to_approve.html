@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<body>
+	<h1>{{template "site_name"}}</h1>
+	<h2>New user to approve</h2>
+	<hr>
+
+	<p>Hello,</p>
+	<p>
+		There is a new user who needs to be approved.
+		Please click the link below to review their profile.
+	</p>
+	<a href="{{.Href}}">{{.Href}}</a>
+	<p>You can also copy and paste the link into your browser.</p>
+	<p>Thanks.</p>
+	<p>{{template "site_name"}}</p>
+</body>

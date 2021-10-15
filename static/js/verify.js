@@ -8,7 +8,7 @@ $(function() {
 	let payload = {token: token};
 
 	// Get invitation
-	$.get(`/user/verify`, payload)
+	$.get(`/user/verify_email`, payload)
 	.done(function(data) {
 		console.log("Verify GET response:");
 		console.log(data);		

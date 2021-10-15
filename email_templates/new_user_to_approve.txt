@@ -1,0 +1,8 @@
+{{template "site_name"}} - New user to approve
+
+Hello,
+There is a new user who needs to be approved. Please copy the below link into your browser and review their profile.
+{{.Href}}
+
+Thanks.
+{{template "site_name"}}

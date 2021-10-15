@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{template "header"}}
+
+    <title>Verify Identity - {{template "site_name"}}</title>
+
+    <link href="/css/verify_identity.css" rel="stylesheet">
+  </head>
+
+  <body>
+    {{template "navbar"}}
+
+    <div class="container">
+      <!-- Header -->
+      <h1 id="page_header">Verify Identity</h1>
+      <hr>
+
+      <div id="alerts"></div>
+
+      <!-- Main view -->
+      <div id="song_info_container">
+		  <p>
+			  Before you are granted access, you must verify your identity.
+			  A site administrator will compare your email address, name,
+			  and postal code with your membership application.
+			  If your information matches what's on file, your account will be approved
+			  and your registration will be complete. 
+		  </p>
+		  <p>
+			  All of the information on this page will kept private and will only
+			  be viewed by site administrators for the purpose of verifying your identity.
+			  This information will not be shared with any others.
+		  </p>
+        <div>
+          <h5 class="label">Email address</h5>
+          <input id="email" type="email">
+        </div>
+        <div>
+          <h5 class="label">First and last name</h5>
+          <input id="name" type="text">
+        </div>
+        <div>
+          <h5 class="label">Postal code</h5>
+          <input id="postal" type="text" inputmode="numeric">
+          <!-- <img src="/img/help-circle.svg" id="help" alt="help" title="Help text."> -->
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="submit">Submit</button>
+        
+        {{template "footer"}}
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade in" tabindex="-1" role="dialog" id="wait" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Submitting...</h5>
+          </div>
+          <div class="modal-body">
+            <p>Please wait while your information is submitted...</p>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Script -->
+    <script src="/js/verify_identity.js" type="module"></script>
+  </body>
+</html>

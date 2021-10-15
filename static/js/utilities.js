@@ -104,6 +104,26 @@ export function get_session_alert() {
 	}
 };
 
+export function add_session_variable(key, value) {
+	try {
+		window.sessionStorage.setItem(key, value);
+		return true;
+	} catch (err) {
+		console.log(`Error adding session variable "${key}" with value "${value}"`);
+		console.log(err);
+		return false;
+	}
+};
+
+export function get_session_variable(key) {
+	try {
+		return window.sessionStorage.getItem(key);
+	} catch (err) {
+		console.log(`Error retrieving session variable "${key}"`);
+		console.log(err);
+	}
+};
+
 export function is_user_logged_in(default_value = false) {
 	try {
 		return window.localStorage.getItem("logged_in") === "true";

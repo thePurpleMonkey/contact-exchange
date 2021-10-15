@@ -11,8 +11,8 @@ import (
 	"github.com/dchest/uniuri"
 )
 
-// VerifyHandler handles verifying account and sending emails
-func VerifyHandler(w http.ResponseWriter, r *http.Request) {
+// VerifyEmailHandler handles verifying account and sending emails
+func VerifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := store.Get(r, "session")
 	if err != nil {
 		log.Printf("Verify handler - Unable to get session: %v\n", err)

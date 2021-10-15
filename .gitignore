@@ -15,4 +15,4 @@
 # vendor/
 
 # Secret build files
-secret/*
+secret/**
