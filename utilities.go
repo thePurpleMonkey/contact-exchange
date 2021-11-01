@@ -24,6 +24,12 @@ const REQUEST_ERROR_MESSAGE string = `{"error": "Unable to parse request."}`
 // PERMISSION_ERROR_MESSAGE is a generic error message for attempting an action that you do not have permission for.
 const PERMISSION_ERROR_MESSAGE string = `{"error": "That action is not permitted."}`
 
+// APPROVAL_ERROR_MESSAGE is a generic error message for attempting an action that requires approval.
+const APPROVAL_ERROR_MESSAGE string = `{"error": "You do not have approval for that action."}`
+
+// LOGIN_ERROR_MESSAGE is the error message when a user is not logged in.
+const LOGIN_ERROR_MESSAGE string = `{"error": "User not logged in."}`
+
 // SendEmail ...
 func SendEmail(name string, address string, subject string, htmlContent string, plainTextContent string) error {
 	from := mail.NewEmail("Contact Exchange", "contact-exchange@michaelhumphrey.dev")

@@ -60,11 +60,17 @@ export function alert_ajax_failure(title, data, replace_existing=false) {
 	console.log("Ajax failure!");
 	console.log(data);
 	if (data.status === 401) {
-		let redirect = "/signin.html?redirect=" + encodeURIComponent(window.location.pathname + window.location.search);
-		console.log("403 Forbidden response received. Setting 'logged_in' to false.");
+		let redirect = "/login.html?redirect=" + encodeURIComponent(window.location.pathname + window.location.search);
+		console.log("401 Unauthorized response received. Setting 'logged_in' to false.");
 		try { window.localStorage.setItem("logged_in", false); } catch(err) { console.log("Unable to 'logged_in' localStorage variable to false."); console.log(err); }
 		console.log("Redirecting to: " + redirect);
 		window.location.href = redirect;
+	} else if(data.status === 403) {
+		let redirect = "/profile.html?";
+		console.log("403 Forbidden response received.");
+		console.log("Redirecting to: /profile.html");
+		add_session_alert("Not approved", "You have not yet been approved to perform that action. Please wait until your account has been reviewed by an administrator.", "danger");
+		window.location.href = "/profile.html";
 	}
 	let alert_text = "";
 	if (data.responseJSON) {

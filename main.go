@@ -37,6 +37,9 @@ func makeRouter() *mux.Router {
 	r.HandleFunc("/user/verify_email", RequireAuthentication(VerifyEmailHandler))
 	r.HandleFunc("/user/verify_identity", RequireAuthentication(VerifyIdentityHandler))
 
+	r.HandleFunc("/contacts", RequireApproval(RequireAuthentication(ContactsHandler)))
+	r.HandleFunc("/contacts/{contact_id}", RequireApproval(RequireAuthentication(ContactHandler)))
+
 	// Contact Us
 	// r.HandleFunc("/contact", ContactHandler).Methods("POST")
 

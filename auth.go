@@ -353,7 +353,7 @@ func resetPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 // RequireAuthentication is a middleware that checks if the user is authenticated,
-// and returns a 403 Forbidden error if not.
+// and returns a 401 Unauthorized error if not.
 func RequireAuthentication(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, err := getSession(r)
@@ -366,7 +366,29 @@ func RequireAuthentication(f http.HandlerFunc) http.HandlerFunc {
 		// Check if user is authenticated
 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
 			log.Println("Require Authentication - Attempt to access restricted page denied")
-			SendError(w, `{"error": "User not logged in."}`, http.StatusUnauthorized)
+			SendError(w, LOGIN_ERROR_MESSAGE, http.StatusUnauthorized)
+			return
+		}
+
+		f(w, r)
+	}
+}
+
+// RequireApproval is a middleware that checks if the user has been approved by an administrator,
+// and returns a 403 Forbidden error if not.
+func RequireApproval(f http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, err := getSession(r)
+		if err != nil {
+			log.Printf("Require Approval - Unable to get session: %v\n", err)
+			SendError(w, SERVER_ERROR_MESSAGE, http.StatusInternalServerError)
+			return
+		}
+
+		// Check if user is approved
+		if status, ok := session.Values["status"].(string); !ok || status != "APPROVED" {
+			log.Println("Require Approval - Attempt to access restricted page denied")
+			SendError(w, APPROVAL_ERROR_MESSAGE, http.StatusForbidden)
 			return
 		}
 

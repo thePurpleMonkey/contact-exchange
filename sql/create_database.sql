@@ -56,6 +56,36 @@ CREATE TABLE IF NOT EXISTS identity_verification
 	note TEXT
 );
 
+CREATE TABLE IF NOT EXISTS profiles
+(
+	user_id INT PRIMARY KEY REFERENCES users(user_id),
+	name TEXT,
+	picture TEXT
+);
+
+CREATE TABLE IF NOT EXISTS contact_details
+(
+	contact_details_id SERIAL PRIMARY KEY,
+	user_id INT REFERENCES users(user_id) NOT NULL,
+	detail_name TEXT,
+	detail_value TEXT,
+	detail_type TEXT REFERENCES contact_detail_type(type_name),
+	ORDER INT,
+);
+
+CREATE TABLE IF NOT EXISTS contact_detail_type
+(
+	type_name TEXT PRIMARY KEY NOT NULL,
+);
+
+INSERT INTO contact_detail_type (type_name)
+VALUES 
+	('text'),
+	('multiline_text'),
+	('email'),
+	('phone')
+ON CONFLICT DO NOTHING;
+
 CREATE FUNCTION is_suspended(suspended_user int)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
